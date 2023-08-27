@@ -18,6 +18,7 @@ from tkinter import ttk
     
 #LOG
 #-23AUG--CREATED GUI INFRASTRUCTURE--NEED TO REVIEW CONCEPTS--SOME CODE WAS COPIED FROM WEB
+#-28AUG--ADDED BUTTONS AND ENTRY BOXES--NOT YET FUNCTIONAL
 #LOG
     
     
@@ -99,3 +100,93 @@ for record in data:
         my_tree.insert(parent='',index='end',iid=count,text='',values=(record[0],record[1],record[2],record[3],record[4],record[5],record[6],record[7]),tags=('oddrow',))
         
     count += 1
+    
+    
+#Add record entry boxes
+data_frame = LabelFrame(root, text="Record")
+data_frame.pack(fill="x", expand="yes", padx=20)
+
+
+###
+name_label = Label(data_frame, text="Name")
+name_label.grid(row=0,column=0,padx=10,pady=10)
+
+name_entry = Entry(data_frame)
+name_entry.grid(row=0,column=1,padx=10,pady=10)
+###
+
+
+adrs_label = Label(data_frame, text="Address")
+adrs_label.grid(row=0,column=2,padx=10,pady=10)
+
+adrs_entry = Entry(data_frame)
+adrs_entry.grid(row=0,column=3,padx=10,pady=10)
+###
+
+
+area_label = Label(data_frame, text="Area")
+area_label.grid(row=0,column=4,padx=10,pady=10)
+
+area_entry = Entry(data_frame)
+area_entry.grid(row=0,column=5,padx=10,pady=10)
+###
+
+
+ph_label = Label(data_frame, text="Phone")
+ph_label.grid(row=1,column=0,padx=10,pady=10)
+
+ph_entry = Entry(data_frame)
+ph_entry.grid(row=1,column=1,padx=10,pady=10)
+###
+
+
+ph2_label = Label(data_frame, text="Phone 2")
+ph2_label.grid(row=1,column=2,padx=10,pady=10)
+
+ph2_entry = Entry(data_frame)
+ph2_entry.grid(row=1,column=3,padx=10,pady=10)
+###
+
+
+tax_label = Label(data_frame, text="Tax Status")
+tax_label.grid(row=1,column=4,padx=10,pady=10)
+
+tax_entry = Entry(data_frame)
+tax_entry.grid(row=1,column=5,padx=10,pady=10)
+###
+
+
+fees_label = Label(data_frame, text="Office Fees Status")
+fees_label.grid(row=1,column=6,padx=10,pady=10)
+
+fees_entry = Entry(data_frame)
+fees_entry.grid(row=1,column=7,padx=10,pady=10)
+###
+
+
+cmts_label = Label(data_frame, text="Notes")
+cmts_label.grid(row=0,column=6,padx=10,pady=10)
+
+cmts_entry = Entry(data_frame)
+cmts_entry.grid(row=0,column=7,padx=10,pady=10)
+###
+
+#####################################################################
+
+##Add buttons
+button_frame = LabelFrame(root, text="Commands")
+button_frame.pack(fill="x",expand="yes",padx=20)
+
+add_button = Button(button_frame, text="Add New Client")
+add_button.grid(row=0,column=0,padx=10,pady=10)
+
+upd_button = Button(button_frame, text="Update Client Details")
+upd_button.grid(row=0,column=1,padx=10,pady=10)
+
+rmv_button = Button(button_frame, text="Remove Selected Client Details")
+rmv_button.grid(row=0,column=2,padx=10,pady=10)
+
+rmvall_button = Button(button_frame, text="Remove All Clients Details")
+rmvall_button.grid(row=0,column=3,padx=10,pady=10)
+
+
