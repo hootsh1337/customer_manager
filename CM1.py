@@ -8,6 +8,8 @@ Created on Wed Aug 23 01:51:27 2023
 # IMPORTS
 from tkinter import *
 from tkinter import ttk
+import openpyxl
+import os
 # END IMPORTS
 
 # This project attempts to create a small customer relationship management system
@@ -82,11 +84,30 @@ my_tree.heading("Tax Status", text="Tax Status", anchor=W)
 my_tree.heading("Fees Status", text="Fees Status", anchor=W)
 my_tree.heading("Notes", text="Notes", anchor=W)
 
+#############################################################################
+
+def load_data():
+    current_file_path = os.path.dirname(__file__)
+    xl_file_path = current_file_path + "\customers.xlsx"
+    workbook = openpyxl.load_workbook(xl_file_path)
+    sheet = workbook.active
+    
+    list_values = list(sheet.values)
+    
+    #Optional line for grabbing headings >>>
+    #for col_name in list_values[0]:
+        #treeview.heading(col_name, text=col_name)
+        
+    for value_tuple in list_values[1:]:
+        
+
 data = [
     ["Hesham", "October", "Juhayna", "01111",
         "0555", "Good", "Paid", "Call Next Month"],
     ["Hamada", "October", "Zayed", "01311", "0545", "Need", "Paid", "Call Now"]
 ]
+
+#############################################################################
 
 # Create styriped rows
 my_tree.tag_configure('oddrow', background="white")
@@ -232,7 +253,7 @@ def update_record():
     selected = my_tree.focus()
     # update record
     my_tree.item(selected, text="", values=(name_entry.get(), adrs_entry.get(), area_entry.get(
-    ), ph_entry.get(), ph2_entry.get(), tax_entry.get(), fees_entry.get(), cmts_entry.get()))
+    ), ph_entry.get(), ph2_entry.get(), tax_entry.get(), fees_entry.get(), cmts_entry.get(),))
 
     # first clear the entry boxes
     name_entry.delete(0, END)
@@ -244,7 +265,22 @@ def update_record():
     fees_entry.delete(0, END)
     cmts_entry.delete(0, END)
 
+#####################################################################
+# Clear boxes functionality
 
+
+def clear_boxes():
+
+    #clear the entry boxes
+    name_entry.delete(0, END)
+    adrs_entry.delete(0, END)
+    area_entry.delete(0, END)
+    ph_entry.delete(0, END)
+    ph2_entry.delete(0, END)
+    tax_entry.delete(0, END)
+    fees_entry.delete(0, END)
+    cmts_entry.delete(0, END)
+    
 #####################################################################
 # Add buttons
 button_frame = LabelFrame(root, text="Commands")
@@ -253,7 +289,7 @@ button_frame.pack(fill="x", expand="yes", padx=20)
 add_button = Button(button_frame, text="Add New Client")
 add_button.grid(row=0, column=0, padx=10, pady=10)
 
-upd_button = Button(button_frame, text="Update Client Details", command=update_record
+upd_button = Button(button_frame, text="Update Client Details", command=update_record)
 upd_button.grid(row=0, column=1, padx=10, pady=10)
 
 rmv_button=Button(
@@ -264,8 +300,9 @@ rmvall_button=Button(
     button_frame, text="Remove All Clients Details", command=remove_all)
 rmvall_button.grid(row=0, column=3, padx=10, pady=10)
 
-slct_button=Button(button_frame, text="Select Record", command=select_record)
-slct_button.grid(row=0, column=4, padx=10, pady=10)
+rmvall_button=Button(
+    button_frame, text="Clear", command=clear_boxes)
+rmvall_button.grid(row=0, column=4, padx=10, pady=10)
 
 #####################################################################
 # Bind the treeview
