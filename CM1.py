@@ -6,7 +6,7 @@ Created on Wed Aug 23 01:51:27 2023
 """
 
 # IMPORTS
-from tkinter import *
+import tkinter as tk
 from tkinter import ttk
 import openpyxl
 import os
@@ -18,17 +18,33 @@ import os
 # Allow the population of the client data by importing Excel sheets
 # Add an option for sending WhatsApp messages and notifications to customers
 
-# LOG
-# -23AUG--CREATED GUI INFRASTRUCTURE--NEED TO REVIEW CONCEPTS--SOME CODE WAS COPIED FROM WEB
+# LOG START
+# -23AUG--CREATED GUI INFRASTRUCTURE--(NEED TO REVIEW CONCEPTS)
 # -28AUG--ADDED BUTTONS AND ENTRY BOXES--NOT YET FUNCTIONAL
 # -30AUG--UPDATED SOME BUTTONS FUNCTIONALITY
-# LOG
+# -08SEP--INTRODUCED EXCEL IMPORT FUNCTIONALITY
+# -TODO---ADD RECORD BUTTON SHOULD INSERT VALUES TO THE TREE AND TO THE EXCEL FILE
+# LOG END
 
 
 # First Step, create data structure
 
+def load_data():
+    current_file_path = os.path.dirname(__file__)
+    xl_file_path = current_file_path + "\customers.xlsx"
+    workbook = openpyxl.load_workbook(xl_file_path)
+    sheet = workbook.active
+    
+    list_values = list(sheet.values)
+
+    for value_tuple in list_values[1:]:
+        my_tree.insert('', tk.END, values=value_tuple)
+
+#############################################################################
+
+
 # Style
-root = Tk()
+root = tk.Tk()
 root.title = ('CRM Test')
 root.geometry = ("1000x500")
 root.iconbitmap = ('F:\Art\Icons\pc.ico')
@@ -44,158 +60,124 @@ style.configure("Treeview", background="#D3D3D3",
 style.map('Treeview', background=[('selected', "347083")])
 
 # Frame and scrollbar
-tree_frame = Frame(root)
-tree_frame.pack(pady=10)
+frame = ttk.Frame(root)
+frame.pack(pady=10)
 
-tree_scroll = Scrollbar(tree_frame)
-tree_scroll.pack(side=RIGHT, fill=Y)
+treeFrame = ttk.Frame(frame)
+treeFrame.grid(row=0, column=1, pady=10)
+treeScroll = ttk.Scrollbar(treeFrame)
+treeScroll.pack(side="right", fill="y")
+
 
 # Create the treeview
 
 my_tree = ttk.Treeview(
-    tree_frame, yscrollcommand=tree_scroll.set, selectmode="extended")
-my_tree.pack()
+    treeFrame, yscrollcommand=treeScroll.set, selectmode="extended")
 
-tree_scroll.config(command=my_tree.yview)
+
+
 
 
 # Creating Columns
 my_tree['columns'] = ("Name", "Address", "Area", "Phone",
                       "Phone 2", "Tax Status", "Fees Status", "Notes")
 
-my_tree.column("#0", width=0, stretch=NO)
-my_tree.column("Name", anchor=W, width=140)
-my_tree.column("Address", anchor=W, width=140)
-my_tree.column("Area", anchor=CENTER, width=140)
-my_tree.column("Phone", anchor=CENTER, width=140)
-my_tree.column("Phone 2", anchor=CENTER, width=140)
-my_tree.column("Tax Status", anchor=CENTER, width=140)
-my_tree.column("Fees Status", anchor=CENTER, width=140)
-my_tree.column("Notes", anchor=W, width=140)
+my_tree.column("#0", width=0)
+my_tree.column("Name", width=140)
+my_tree.column("Address", width=140)
+my_tree.column("Area", width=140)
+my_tree.column("Phone", width=140)
+my_tree.column("Phone 2", width=140)
+my_tree.column("Tax Status", width=140)
+my_tree.column("Fees Status", width=140)
+my_tree.column("Notes", width=140)
 
 # Creating Headings
-my_tree.heading("#0", text="", anchor=W)
-my_tree.heading("Name", text="Name", anchor=W)
-my_tree.heading("Address", text="Address", anchor=W)
-my_tree.heading("Area", text="Area", anchor=W)
-my_tree.heading("Phone", text="Phone", anchor=W)
-my_tree.heading("Phone 2", text="Phone 2", anchor=W)
-my_tree.heading("Tax Status", text="Tax Status", anchor=W)
-my_tree.heading("Fees Status", text="Fees Status", anchor=W)
-my_tree.heading("Notes", text="Notes", anchor=W)
+my_tree.heading("#0", text="")
+my_tree.heading("Name", text="Name")
+my_tree.heading("Address", text="Address")
+my_tree.heading("Area", text="Area")
+my_tree.heading("Phone", text="Phone")
+my_tree.heading("Phone 2", text="Phone 2")
+my_tree.heading("Tax Status", text="Tax Status")
+my_tree.heading("Fees Status", text="Fees Status")
+my_tree.heading("Notes", text="Notes")
+
+
+
+############################################################################
+
 
 #############################################################################
 
-def load_data():
-    current_file_path = os.path.dirname(__file__)
-    xl_file_path = current_file_path + "\customers.xlsx"
-    workbook = openpyxl.load_workbook(xl_file_path)
-    sheet = workbook.active
-    
-    list_values = list(sheet.values)
-    
-    #Optional line for grabbing headings >>>
-    #for col_name in list_values[0]:
-        #treeview.heading(col_name, text=col_name)
-        
-    for value_tuple in list_values[1:]:
-        
-
-data = [
-    ["Hesham", "October", "Juhayna", "01111",
-        "0555", "Good", "Paid", "Call Next Month"],
-    ["Hamada", "October", "Zayed", "01311", "0545", "Need", "Paid", "Call Now"]
-]
-
-#############################################################################
-
-# Create styriped rows
-my_tree.tag_configure('oddrow', background="white")
-my_tree.tag_configure('evenrow', background="lightblue")
-
-#############################################################################
-
-# Adding data to screen
-global count
-count = 0
-
-for record in data:
-    if count % 2 == 0:
-        my_tree.insert(parent='', index='end', iid=count, text='', values=(
-            record[0], record[1], record[2], record[3], record[4], record[5], record[6], record[7]), tags=('evenrow',))
-    else:
-        my_tree.insert(parent='', index='end', iid=count, text='', values=(
-            record[0], record[1], record[2], record[3], record[4], record[5], record[6], record[7]), tags=('oddrow',))
-
-    count += 1
 
 
 # Add record entry boxes
-data_frame = LabelFrame(root, text="Record")
+data_frame = ttk.LabelFrame(root, text="Record")
 data_frame.pack(fill="x", expand="yes", padx=20)
 
 
 ###
-name_label = Label(data_frame, text="Name")
+name_label = ttk.Label(data_frame, text="Name")
 name_label.grid(row=0, column=0, padx=10, pady=10)
 
-name_entry = Entry(data_frame)
+name_entry = ttk.Entry(data_frame)
 name_entry.grid(row=0, column=1, padx=10, pady=10)
 ###
 
 
-adrs_label = Label(data_frame, text="Address")
+adrs_label = ttk.Label(data_frame, text="Address")
 adrs_label.grid(row=0, column=2, padx=10, pady=10)
 
-adrs_entry = Entry(data_frame)
+adrs_entry = ttk.Entry(data_frame)
 adrs_entry.grid(row=0, column=3, padx=10, pady=10)
 ###
 
 
-area_label = Label(data_frame, text="Area")
+area_label = ttk.Label(data_frame, text="Area")
 area_label.grid(row=0, column=4, padx=10, pady=10)
 
-area_entry = Entry(data_frame)
+area_entry = ttk.Entry(data_frame)
 area_entry.grid(row=0, column=5, padx=10, pady=10)
 ###
 
 
-ph_label = Label(data_frame, text="Phone")
+ph_label = ttk.Label(data_frame, text="Phone")
 ph_label.grid(row=1, column=0, padx=10, pady=10)
 
-ph_entry = Entry(data_frame)
+ph_entry = ttk.Entry(data_frame)
 ph_entry.grid(row=1, column=1, padx=10, pady=10)
 ###
 
 
-ph2_label = Label(data_frame, text="Phone 2")
+ph2_label = ttk.Label(data_frame, text="Phone 2")
 ph2_label.grid(row=1, column=2, padx=10, pady=10)
 
-ph2_entry = Entry(data_frame)
+ph2_entry = ttk.Entry(data_frame)
 ph2_entry.grid(row=1, column=3, padx=10, pady=10)
 ###
 
 
-tax_label = Label(data_frame, text="Tax Status")
+tax_label = ttk.Label(data_frame, text="Tax Status")
 tax_label.grid(row=1, column=4, padx=10, pady=10)
 
-tax_entry = Entry(data_frame)
+tax_entry = ttk.Entry(data_frame)
 tax_entry.grid(row=1, column=5, padx=10, pady=10)
 ###
 
 
-fees_label = Label(data_frame, text="Office Fees Status")
+fees_label = ttk.Label(data_frame, text="Office Fees Status")
 fees_label.grid(row=1, column=6, padx=10, pady=10)
 
-fees_entry = Entry(data_frame)
+fees_entry = ttk.Entry(data_frame)
 fees_entry.grid(row=1, column=7, padx=10, pady=10)
 ###
 
 
-cmts_label = Label(data_frame, text="Notes")
+cmts_label = ttk.Label(data_frame, text="Notes")
 cmts_label.grid(row=0, column=6, padx=10, pady=10)
 
-cmts_entry = Entry(data_frame)
+cmts_entry = ttk.Entry(data_frame)
 cmts_entry.grid(row=0, column=7, padx=10, pady=10)
 ###
 
@@ -206,14 +188,14 @@ cmts_entry.grid(row=0, column=7, padx=10, pady=10)
 
 def select_record(e):
     # first clear the entry boxes
-    name_entry.delete(0, END)
-    adrs_entry.delete(0, END)
-    area_entry.delete(0, END)
-    ph_entry.delete(0, END)
-    ph2_entry.delete(0, END)
-    tax_entry.delete(0, END)
-    fees_entry.delete(0, END)
-    cmts_entry.delete(0, END)
+    name_entry.delete(0, 'END')
+    adrs_entry.delete(0, 'END')
+    area_entry.delete(0, 'END')
+    ph_entry.delete(0, 'END')
+    ph2_entry.delete(0, 'END')
+    tax_entry.delete(0, 'END')
+    fees_entry.delete(0, 'END')
+    cmts_entry.delete(0, 'END')
 
     # grab record number
     selected = my_tree.focus()
@@ -256,14 +238,14 @@ def update_record():
     ), ph_entry.get(), ph2_entry.get(), tax_entry.get(), fees_entry.get(), cmts_entry.get(),))
 
     # first clear the entry boxes
-    name_entry.delete(0, END)
-    adrs_entry.delete(0, END)
-    area_entry.delete(0, END)
-    ph_entry.delete(0, END)
-    ph2_entry.delete(0, END)
-    tax_entry.delete(0, END)
-    fees_entry.delete(0, END)
-    cmts_entry.delete(0, END)
+    name_entry.delete(0, 'END')
+    adrs_entry.delete(0, 'END')
+    area_entry.delete(0, 'END')
+    ph_entry.delete(0, 'END')
+    ph2_entry.delete(0, 'END')
+    tax_entry.delete(0, 'END')
+    fees_entry.delete(0, 'END')
+    cmts_entry.delete(0, 'END')
 
 #####################################################################
 # Clear boxes functionality
@@ -272,38 +254,44 @@ def update_record():
 def clear_boxes():
 
     #clear the entry boxes
-    name_entry.delete(0, END)
-    adrs_entry.delete(0, END)
-    area_entry.delete(0, END)
-    ph_entry.delete(0, END)
-    ph2_entry.delete(0, END)
-    tax_entry.delete(0, END)
-    fees_entry.delete(0, END)
-    cmts_entry.delete(0, END)
+    name_entry.delete(0, 'END')
+    adrs_entry.delete(0, 'END')
+    area_entry.delete(0, 'END')
+    ph_entry.delete(0, 'END')
+    ph2_entry.delete(0, 'END')
+    tax_entry.delete(0, 'END')
+    fees_entry.delete(0, 'END')
+    cmts_entry.delete(0, 'END')
     
 #####################################################################
 # Add buttons
-button_frame = LabelFrame(root, text="Commands")
+button_frame = ttk.LabelFrame(root, text="Commands")
 button_frame.pack(fill="x", expand="yes", padx=20)
 
-add_button = Button(button_frame, text="Add New Client")
+add_button = ttk.Button(button_frame, text="Add New Client")
 add_button.grid(row=0, column=0, padx=10, pady=10)
 
-upd_button = Button(button_frame, text="Update Client Details", command=update_record)
+upd_button = ttk.Button(button_frame, text="Update Client Details", command=update_record)
 upd_button.grid(row=0, column=1, padx=10, pady=10)
 
-rmv_button=Button(
+rmv_button= ttk.Button(
     button_frame, text="Remove Selected Client Details", command=remove_one)
 rmv_button.grid(row=0, column=2, padx=10, pady=10)
 
-rmvall_button=Button(
+rmvall_button= ttk.Button(
     button_frame, text="Remove All Clients Details", command=remove_all)
 rmvall_button.grid(row=0, column=3, padx=10, pady=10)
 
-rmvall_button=Button(
+rmvall_button= ttk.Button(
     button_frame, text="Clear", command=clear_boxes)
 rmvall_button.grid(row=0, column=4, padx=10, pady=10)
 
 #####################################################################
 # Bind the treeview
 my_tree.bind("<ButtonRelease-1>", select_record)
+my_tree.pack()
+treeScroll.config(command=my_tree.yview)
+load_data()
+root.mainloop()
+
+print("77")
