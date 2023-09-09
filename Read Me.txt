@@ -1,0 +1,5 @@
+- Put your customer data into "Customers.xlsx" sheet
+- Do not change column heading
+- Do not change file name
+- Keep Customers.xlsx in same folder as program 
+- Keep Customers.xlsx CLOSED while using the program 
