@@ -13,6 +13,7 @@ import os
 import pywhatkit
 import pandas as pd
 import re
+from datetime import datetime
 # END IMPORTS
 
 # This project attempts to create a small customer relationship management system
@@ -28,7 +29,8 @@ import re
 # -08SEP--INTRODUCED EXCEL IMPORT FUNCTIONALITY
 # -09SEP--ADD RECORD BUTTON IS FUNCTIONAL
 # -10SEP--INTRODUCED REFRESH FUNCTIONALITY--UPDATE AND SINGLE ENTRY DELETE NOW AFFECTS XL FILE--INTRODUCED ENTRY COUNTER
-# -TODO---FIX WHATSAPP BUTTON + UPDATE DELETE BUTTONS
+# -14SEP--WHATSAPP BUTTON WORKING--OTHER BUTTONS WORKING
+# -TODO---ADD SOME QUALITY OF LIFE IMPROVEMENTS
 # LOG END
 
 total_clients = 0
@@ -87,11 +89,11 @@ def remove_one():
     with pd.ExcelWriter(xl_file_path) as writer:
         df2.to_excel(writer, sheet_name= "Sheet", index=False)
     
-    # clear treeview to refresh
+    # refresh: clear treeview
     for item in my_tree.get_children():
         my_tree.delete(item)
    
-    # load data again
+    # refresh: load data again
     load_data()
 
 
@@ -223,18 +225,38 @@ def send_wapp():
     
     current_file_path = os.path.dirname(__file__)
     xl_file_path = current_file_path + "\customers.xlsx"
-    workbook = openpyxl.load_workbook(xl_file_path)
-    sheet = workbook.active
+    # put excel file in dataframe
+    df = pd.read_excel(xl_file_path)
     
-    list_values = list(sheet.values)
+    # put text file content in variable: text_content
+    tx_file_path = current_file_path + "\Message content.txt"
+    with open(tx_file_path, encoding='utf-8') as t:
+        text_content = str(t.readlines())
+        text_content = text_content[2:-2]
 
-    for value_tuple in list_values[1:]:
-        my_tree.insert('', tk.END, values=value_tuple)
-    
-        if tax_entry == 'Late Tax Statement':
-            # Send a whatsapp message at 6PM, message is delivered after 60 seconds
-            pywhatkit.sendwhatmsg("","",18,00,60)
+    for i in range(len(df)):
 
+        print(str( df.loc[i,['tax']].array[0] ) )
+        
+        if str(df.loc[i,['tax']].array[0]) == "Late Tax Statement":
+            # find phone number
+            print(str( df.loc[i,['phone']].array[0] ) )
+            send_to_phone = int( df.loc[i,['phone']].array[0] )
+            send_to_phone = "+" + str(send_to_phone)
+            print(send_to_phone)
+            print(text_content)
+            # Send a whatsapp message at current time + one minute, message is delivered after 10 seconds\
+            dtime = datetime.now()
+            h_now = dtime.hour
+            m_now = dtime.minute + 1
+            
+            pywhatkit.sendwhatmsg(send_to_phone,text_content,h_now,m_now,10)
+            
+            # find second phone and send as well
+            #send_to_phone2 = df['phone2']
+            #pywhatkit.sendwhatmsg(send_to_phone2,text_content,16,42,60)
+            print('program ran ', i+1, ' times')
+            
 
 #############################################################################
 
@@ -356,7 +378,7 @@ rmvall_button.grid(row=0, column=3, padx=10, pady=10)
 clr_button= ttk.Button(button_frame, text="Clear", command=clear_boxes)
 clr_button.grid(row=0, column=4, padx=10, pady=10)
 
-wapp_button= ttk.Button(button_frame, text="Send WhatsApp Reminder to Late Clients")
+wapp_button= ttk.Button(button_frame, text="Send WhatsApp Reminder to Late Clients", command=send_wapp)
 wapp_button.grid(row=0, column=5, padx=10, pady=10)
 
 #####################################################################
@@ -385,7 +407,6 @@ my_tree.column("Area", width=140)
 my_tree.column("Phone", width=140)
 my_tree.column("Phone 2", width=140)
 my_tree.column("Tax Status", width=140)
-
 my_tree.column("Notes", width=140)
 
 # Creating Headings

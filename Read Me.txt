@@ -1,5 +1,8 @@
-- Put your customer data into "Customers.xlsx" sheet
+- Put your customer data into "Customers.xlsx" sheet, or use program to input data
+- Put your message content into "Message content.txt" text file
 - Do not change column heading
-- Do not change file name
-- Keep Customers.xlsx in same folder as program 
-- Keep Customers.xlsx CLOSED while using the program 
+- Do not change files names
+- Keep "Customers.xlsx" in same folder as program 
+- Keep "Customers.xlsx" CLOSED while using the program 
+- Keep "Message content.txt" in same folder as program 
+- Keep "Message content.txt" CLOSED while using the program 
