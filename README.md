@@ -1,4 +1,4 @@
-# customer_manager
+# Customer Data Management Tool
 A customer management solution for a financial services office. Import excel files of customer data, gather insights and send whatsApp reminders.
 
 
